@@ -41,7 +41,7 @@ public class Searcher {
         for (ScoreDoc sd : foundDocs.scoreDocs) {
             Document d = searcher.doc(sd.doc);
 //            System.out.println("Path : " + d.get("path") + ", Score : " + sd.score);
-            System.out.printf("%-30s %-30f %s\n", d.get("name"), sd.score, d.get("abstract"));
+            System.out.printf("%-30s %-30f\n", d.get("name"), sd.score);
         }
     }
 
