@@ -17,8 +17,6 @@ import org.apache.lucene.store.FSDirectory;
 
 public class Searcher {
 
-    private static final String INDEX_DIR = "indexedFiles";
-
     public static void main(String[] args) throws Exception
     {
 
@@ -31,7 +29,7 @@ public class Searcher {
         }
 
         if(query == null)
-            query = "delhi";
+            query = "Delhi";
 
         IndexSearcher searcher = createSearcher();
 
@@ -46,23 +44,23 @@ public class Searcher {
         }
     }
 
-    private static TopDocs searchInContent(String textToFind, IndexSearcher searcher) throws Exception
-    {
-        QueryParser qp = new QueryParser("name", new StandardAnalyzer());
-        Query query = qp.parse(textToFind);
-
-        TopDocs hits = searcher.search(query, 20);
-
-        return hits;
-    }
-
     private static IndexSearcher createSearcher() throws IOException
     {
-        Directory dir = FSDirectory.open(Paths.get(INDEX_DIR));
+        Directory dir = FSDirectory.open(Paths.get(Writer.indexPath));
 
         IndexReader reader = DirectoryReader.open(dir);
 
-        IndexSearcher searcher = new IndexSearcher(reader);
-        return searcher;
+        return new IndexSearcher(reader);
+    }
+
+    private static TopDocs searchInContent(String textToFind, IndexSearcher searcher) throws Exception
+    {
+
+        System.out.println(textToFind);
+
+        QueryParser qp = new QueryParser(Writer.PLACE_KEY_ABSTRACT, new StandardAnalyzer());
+        Query query = qp.parse(textToFind);
+
+        return searcher.search(query, 20);
     }
 }

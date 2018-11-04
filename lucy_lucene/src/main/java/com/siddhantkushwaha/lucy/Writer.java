@@ -1,6 +1,7 @@
 package com.siddhantkushwaha.lucy;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,17 +23,23 @@ import org.apache.lucene.store.FSDirectory;
 
 public class Writer {
 
-    public static void main(String[] args)
-    {
+    static String indexPath = "indexedFiles";
+
+    static String PLACE_KEY_NAME = "name";
+    static String PLACE_KEY_ABSTRACT = "abstract";
+    static String PLACE_KEY_COUNTRY = "country";
+    static String PLACE_KEY_POPULATION = "population";
+    static String PLACE_KEY_IS_PART_OF = "isPartOf";
+    static String PLACE_KEY_UTC_OFFSET = "utcOffset";
+    static String PLACE_KEY_LATLNG = "latlng";
+
+    public static void main(String[] args) {
+
         String docsPath = "inputFiles";
-
-        String indexPath = "indexedFiles";
-
         final Path docDir = Paths.get(docsPath);
 
-        try
-        {
-            Directory dir = FSDirectory.open( Paths.get(indexPath) );
+        try {
+            Directory dir = FSDirectory.open(Paths.get(indexPath));
 
             Analyzer analyzer = new StandardAnalyzer();
 
@@ -44,63 +51,46 @@ public class Writer {
             indexDocs(writer, docDir);
 
             writer.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void indexDocs(final IndexWriter writer, Path path) throws IOException
-    {
-        if (Files.isDirectory(path))
-        {
-            Files.walkFileTree(path, new SimpleFileVisitor<Path>()
-            {
+    private static void indexDocs(final IndexWriter writer, Path path) throws IOException {
+        if (Files.isDirectory(path)) {
+            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                 @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
-                {
-                    try
-                    {
-                        indexDoc(writer, file, attrs.lastModifiedTime().toMillis());
-                    }
-                    catch (IOException ioe)
-                    {
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    try {
+                        indexDoc(writer, file);
+                    } catch (IOException ioe) {
                         ioe.printStackTrace();
                     }
                     return FileVisitResult.CONTINUE;
                 }
             });
-        }
-        else
-        {
-            indexDoc(writer, path, Files.getLastModifiedTime(path).toMillis());
+        } else {
+            indexDoc(writer, path);
         }
     }
 
-    private static void indexDoc(IndexWriter writer, Path file, long lastModified) throws IOException
-    {
-        try
-        {
+    private static void indexDoc(IndexWriter writer, Path file) throws IOException {
+        try {
 
             JsonObject jsonObject = CommonUtils.fromJsonFile(file.toString());
-            if(jsonObject == null)
+            if (jsonObject == null)
                 return;
             Place place = CommonUtils.fromJson(jsonObject.toString(), Place.class);
 
-            // System.out.println(place.toString());
-
             Document doc = new Document();
             doc.add(new StringField("path", file.toString(), Field.Store.YES));
-            doc.add(new LongPoint("modified", lastModified));
 
-            doc.add(new StringField("name", place.getName(), Field.Store.YES));
-            doc.add(new StringField("abstract", place.getDescription(), Field.Store.YES));
-            doc.add(new StringField("country", place.getCountry(), Field.Store.YES));
+            doc.add(new TextField(PLACE_KEY_NAME, place.getName(), Field.Store.YES));
+            doc.add(new TextField(PLACE_KEY_ABSTRACT, place.getDescription(), Field.Store.YES));
+            doc.add(new TextField(PLACE_KEY_COUNTRY, place.getCountry(), Field.Store.YES));
 
             writer.updateDocument(new Term("path", file.toString()), doc);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
