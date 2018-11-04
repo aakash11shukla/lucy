@@ -5,9 +5,9 @@ import java.nio.file.Paths;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.SortedNumericDocValuesField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
@@ -25,7 +25,7 @@ public class Searcher {
         }
 
         if (query == null)
-            query = "cultural capital of india";
+            query = "pink city";
 
         IndexSearcher searcher = createSearcher();
 
@@ -56,22 +56,21 @@ public class Searcher {
     private static TopDocs searchInDocuments(String textToFind, IndexSearcher searcher) throws Exception {
 
         QueryParser qp = new QueryParser(Writer.PLACE_KEY_ABSTRACT, new StandardAnalyzer());
-        qp.setDefaultOperator(QueryParser.Operator.AND);
 
         Query phraseQuery = qp.createPhraseQuery(Writer.PLACE_KEY_ABSTRACT, textToFind, 2);
         System.out.println(phraseQuery);
 
-        Query query = qp.parse(textToFind);
-        System.out.println(query);
+        Query orQuery = qp.parse(textToFind);
+        System.out.println(orQuery);
 
         BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
         booleanQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
-        booleanQueryBuilder.add(query, BooleanClause.Occur.FILTER);
+        booleanQueryBuilder.add(orQuery, BooleanClause.Occur.SHOULD);
 
         BooleanQuery finalQuery = booleanQueryBuilder.build();
         System.out.println(finalQuery);
 
-        TopDocs result = searcher.search(finalQuery, 200);
+        TopDocs result = searcher.search(finalQuery, 20);
         return result;
     }
 }
