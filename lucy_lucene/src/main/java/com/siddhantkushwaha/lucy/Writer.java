@@ -1,7 +1,6 @@
 package com.siddhantkushwaha.lucy;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,14 +8,10 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import com.google.gson.JsonObject;;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.LongPoint;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
+import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
@@ -85,15 +80,28 @@ public class Writer {
 
     private static void indexDoc(IndexWriter writer, Path file, long lastModified) throws IOException
     {
-        try (InputStream stream = Files.newInputStream(file))
+        try
         {
-            Document doc = new Document();
 
+            JsonObject jsonObject = CommonUtils.fromJsonFile(file.toString());
+            if(jsonObject == null)
+                return;
+            Place place = CommonUtils.fromJson(jsonObject.toString(), Place.class);
+
+            // System.out.println(place.toString());
+
+            Document doc = new Document();
             doc.add(new StringField("path", file.toString(), Field.Store.YES));
             doc.add(new LongPoint("modified", lastModified));
-            doc.add(new TextField("contents", new String(Files.readAllBytes(file)), Store.YES));
+
+            doc.add(new StringField("name", place.getName(), Field.Store.YES));
+            doc.add(new StringField("abstract", place.getDescription(), Field.Store.YES));
+            doc.add(new StringField("country", place.getCountry(), Field.Store.YES));
 
             writer.updateDocument(new Term("path", file.toString()), doc);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

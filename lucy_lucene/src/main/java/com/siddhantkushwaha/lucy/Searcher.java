@@ -31,7 +31,7 @@ public class Searcher {
         }
 
         if(query == null)
-            query = "query";
+            query = "delhi";
 
         IndexSearcher searcher = createSearcher();
 
@@ -48,10 +48,10 @@ public class Searcher {
 
     private static TopDocs searchInContent(String textToFind, IndexSearcher searcher) throws Exception
     {
-        QueryParser qp = new QueryParser("contents", new StandardAnalyzer());
+        QueryParser qp = new QueryParser("name", new StandardAnalyzer());
         Query query = qp.parse(textToFind);
 
-        TopDocs hits = searcher.search(query, 10);
+        TopDocs hits = searcher.search(query, 20);
 
         return hits;
     }
