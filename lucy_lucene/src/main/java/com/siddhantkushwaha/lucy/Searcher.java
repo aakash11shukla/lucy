@@ -7,45 +7,45 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 public class Searcher {
 
-    public static void main(String[] args) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
 
         String query = null;
         try {
             query = args[0];
-        }
-        catch (Exception e) {
-            System.out.println(e.toString());
+        } catch (Exception e) {
+            // Nothing
         }
 
-        if(query == null)
-            query = "Delhi";
+        if (query == null)
+            query = "cultural capital of india";
 
         IndexSearcher searcher = createSearcher();
 
-        TopDocs foundDocs = searchInContent(query, searcher);
+        long startTime = System.nanoTime();
 
-        System.out.println("Total Results :: " + foundDocs.totalHits);
+        TopDocs foundDocs = searchInDocuments(query, searcher);
 
-        for (ScoreDoc sd : foundDocs.scoreDocs)
-        {
+        long endTime   = System.nanoTime();
+        long totalTime = endTime - startTime;
+
+        System.out.printf("Total Results: %s, time taken: %f\n\n", foundDocs.totalHits, totalTime/(1e9));
+
+        for (ScoreDoc sd : foundDocs.scoreDocs) {
             Document d = searcher.doc(sd.doc);
-            System.out.println("Path : "+ d.get("path") + ", Score : " + sd.score);
+//            System.out.println("Path : " + d.get("path") + ", Score : " + sd.score);
+            System.out.printf("%-30s %-30f %s\n", d.get("name"), sd.score, d.get("abstract"));
         }
     }
 
-    private static IndexSearcher createSearcher() throws IOException
-    {
+    private static IndexSearcher createSearcher() throws IOException {
         Directory dir = FSDirectory.open(Paths.get(Writer.indexPath));
 
         IndexReader reader = DirectoryReader.open(dir);
@@ -53,14 +53,14 @@ public class Searcher {
         return new IndexSearcher(reader);
     }
 
-    private static TopDocs searchInContent(String textToFind, IndexSearcher searcher) throws Exception
-    {
-
-        System.out.println(textToFind);
+    private static TopDocs searchInDocuments(String textToFind, IndexSearcher searcher) throws Exception {
 
         QueryParser qp = new QueryParser(Writer.PLACE_KEY_ABSTRACT, new StandardAnalyzer());
+        qp.setDefaultOperator(QueryParser.Operator.AND);
+        qp.setSplitOnWhitespace(true);
+        qp.setAutoGeneratePhraseQueries(true);
         Query query = qp.parse(textToFind);
-
-        return searcher.search(query, 20);
+        System.out.println(query);
+        return searcher.search(query, 200);
     }
 }
