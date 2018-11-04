@@ -7,28 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="32e200ed-b0e9-42bc-9cab-73252d14fc4a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__com_google_code_gson_gson_2_8_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/libraries/lucene_analyzers_common_7_4_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/libraries/lucene_core_7_4_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/libraries/lucene_queryparser_7_4_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/lucy.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/lucene-analyzers-common-7.4.0.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/lucene-core-7.4.0.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/lucene-queryparser-7.4.0.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lucy.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lucy.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/java/com/siddhantkushwaha/lucy/CommonUtils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/java/com/siddhantkushwaha/lucy/Place.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/java/com/siddhantkushwaha/lucy/Searcher.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/java/com/siddhantkushwaha/lucy/Writer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/resources/META-INF/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -128,8 +107,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/siddhantkushwaha/lucy/Writer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="585">
-              <caret line="39" column="69" lean-forward="true" selection-start-line="39" selection-start-column="69" selection-end-line="39" selection-end-column="69" />
+            <state relative-caret-position="525">
+              <caret line="35" column="16" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -336,7 +315,7 @@
       <workItem from="1541231908747" duration="315000" />
       <workItem from="1541312072227" duration="747000" />
       <workItem from="1541314475301" duration="85000" />
-      <workItem from="1541314592521" duration="72000" />
+      <workItem from="1541314592521" duration="270000" />
     </task>
     <servers />
   </component>
@@ -346,10 +325,11 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6124000" />
+    <option name="totallyTimeSpent" value="6322000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.28540772" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -422,8 +402,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/siddhantkushwaha/lucy/Writer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="585">
-          <caret line="39" column="69" lean-forward="true" selection-start-line="39" selection-start-column="69" selection-end-line="39" selection-end-column="69" />
+        <state relative-caret-position="525">
+          <caret line="35" column="16" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
