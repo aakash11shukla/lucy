@@ -1,6 +1,7 @@
 {% extends 'index.html' %}
 
 {% block head-content %}
+    <title>query - Lucy</title>
     <style>
         html {
             position: relative;
@@ -30,19 +31,14 @@
             lucy
         </div>
         <div class="col-lg-6 my-2 vertical-center">
-            <div class="input-group search-bar-group">
-                <input class="form-control search-bar" type="text" name="query" placeholder="Search for places.">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                </div>
-            </div>
+            {% include 'search_bar.html' %}
         </div>
     </div>
 
-        {% include 'result_card.html' %}
-        {% include 'result_card.html' %}
-        {% include 'result_card.html' %}
-        {% include 'result_card.html' %}
+    {% include 'result_card.html' %}
+    {% include 'result_card.html' %}
+    {% include 'result_card.html' %}
+    {% include 'result_card.html' %}
 
     </body>
 {% endblock %}
