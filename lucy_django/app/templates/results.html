@@ -52,12 +52,13 @@
         function toggleView(doc) {
             console.log(doc);
             result = doc.getElementsByClassName('card-body');
-            if (result[0].style.display === 'block') {
-                result[0].style.display = 'none';
-                result[1].style.display = 'block';
-            } else {
+
+            if (result[0].style.display === 'none') {
                 result[0].style.display = 'block';
                 result[1].style.display = 'none';
+            } else {
+                result[0].style.display = 'none';
+                result[1].style.display = 'block';
             }
         }
     </script>
