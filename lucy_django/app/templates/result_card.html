@@ -2,19 +2,21 @@
     <div class="row">
         <div class="col-8">
             <div class="card">
-                <div class="card-body">
-                    {{ place.abstract|slice:"0:300" }}
+                <div class="card-header" style="font-weight: bold;">{{ place.name }}</div>
+                <div class="card-body text-justify" >
+                    {{ place.abstract|slice:"300" }} ...
                 </div>
+                <div class="card-footer">Show something here.</div>
             </div>
         </div>
 
-{#        <div class="col-4 horizontal-center">#}
-{#            <div class="card">#}
-{#                <div class="card-body vertical-center">#}
-{#                    This is some text within a card body.#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
+        {#        <div class="col-4 horizontal-center">#}
+        {#            <div class="card">#}
+        {#                <div class="card-body vertical-center">#}
+        {#                    This is some text within a card body.#}
+        {#                </div>#}
+        {#            </div>#}
+        {#        </div>#}
 
     </div>
 </div>
