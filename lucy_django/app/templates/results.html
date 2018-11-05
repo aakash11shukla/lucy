@@ -35,10 +35,9 @@
         </div>
     </div>
 
-    {% include 'result_card.html' %}
-    {% include 'result_card.html' %}
-    {% include 'result_card.html' %}
-    {% include 'result_card.html' %}
+    {% for place in places %}
+        {% include 'result_card.html' %}
+    {% endfor %}
 
     </body>
 {% endblock %}

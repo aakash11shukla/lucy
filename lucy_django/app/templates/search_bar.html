@@ -1,7 +1,9 @@
+<form id="search-form" method="get" action="{% url 'app:search' %}" style="width: 100%;">
 <div class="input-group search-bar-group">
-    <input class="form-control search-bar" type="text" name="query"
+    <input class="form-control search-bar" type="text" name="query" {% if query is not None %} value="{{ query }}" {% endif %}
            placeholder="Search for places.">
-    <div class="input-group-prepend">
+    <div class="input-group-prepend" onclick="document.getElementById('search-form').submit()">
         <span class="input-group-text"><i class="fas fa-search"></i></span>
     </div>
 </div>
+</form>

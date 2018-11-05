@@ -3,13 +3,11 @@
         <div class="col-8">
             <div class="card">
                 <div class="card-body">
-                    This is some text within a card body.This is some text within a card body.This is some text
-                    within a card body.This is some text within a card body.This is some text within a card
-                    body.This is some text within a card body.This is some text within a card body.This is some
-                    text within a card body.
+                    {{ place.abstract|slice:"0:300" }}
                 </div>
             </div>
         </div>
+
 {#        <div class="col-4 horizontal-center">#}
 {#            <div class="card">#}
 {#                <div class="card-body vertical-center">#}
@@ -17,5 +15,7 @@
 {#                </div>#}
 {#            </div>#}
 {#        </div>#}
+
     </div>
+</div>
 </div>
