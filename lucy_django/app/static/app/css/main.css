@@ -1,0 +1,65 @@
+@font-face {
+    font-family: Debby;
+    src: url(../fonts/Debby.ttf);
+}
+
+.body-background {
+    background: url(../images/background_4.jpeg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.row-background {
+    background-color: #4286f4;
+}
+
+.vertical-center {
+    display: flex;
+    align-items: center;
+}
+
+.horizontal-center {
+    display: flex;
+    justify-content: center
+}
+
+.brand {
+    text-align: center;
+    font-size: 12em;
+    font-family: Debby;
+}
+
+.btn:focus {
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.form-control:focus {
+    border-color: #cccccc;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.input-group-text {
+    border: 0;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.input-group-text:hover {
+    background-color: #4286f4;
+}
+
+.search-bar-group {
+    max-width: 600px;
+    margin: auto;
+}
+
+.search-bar {
+    padding: 20px;
+    border: 0;
+    border-radius: 100px;
+    transition: none;
+}
