@@ -1,23 +1,23 @@
+{% load staticfiles %}
 <div class="container" style="margin-top: 36px;">
     <div class="row">
-        <div class="col-8">
-            <div class="card">
+        <div class="col-lg-8">
+            <div class="card" onclick="toggleView(this)">
                 <div class="card-header" style="font-weight: bold;">{{ place.name }}</div>
-                <div class="card-body text-justify" >
+                <div class="card-body text-justify">
                     {{ place.abstract|slice:"300" }} ...
                 </div>
-                <div class="card-footer">Show something here.</div>
+                <div class="card-body text-justify" style="display: none">
+                    {{ place.abstract }}
+                </div>
+                <div class="card-footer">
+                    Show something here.
+                    {# TODO change this to an actual url later #}
+                    <a href="http://maps.google.co.uk/maps?q=51.917168,-0.227051" target="_blank"><img
+                            src="{% static 'app/images/marker.svg' %}" style="height: 24px; float: right"></a>
+                </div>
             </div>
         </div>
-
-        {#        <div class="col-4 horizontal-center">#}
-        {#            <div class="card">#}
-        {#                <div class="card-body vertical-center">#}
-        {#                    This is some text within a card body.#}
-        {#                </div>#}
-        {#            </div>#}
-        {#        </div>#}
-
     </div>
 </div>
 </div>

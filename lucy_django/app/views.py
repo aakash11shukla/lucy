@@ -8,5 +8,7 @@ def main(request):
 
 def search(request):
     query = request.GET.get("query")
-    result = get_search_results(query)
+    result = None
+    if query is not None and len(query) != 0:
+        result = get_search_results(query)
     return render(request, 'results.html', {"query": query, "places": result})

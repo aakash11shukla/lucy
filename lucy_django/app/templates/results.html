@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 
 {% block head-content %}
-    <title>query - Lucy</title>
+    <title>Lucy - {{ query }}</title>
     <style>
         html {
             position: relative;
@@ -48,4 +48,17 @@
             <span class="text-muted">Lucy @2018</span>
         </div>
     </footer>
+    <script>
+        function toggleView(doc) {
+            console.log(doc);
+            result = doc.getElementsByClassName('card-body');
+            if (result[0].style.display === 'block') {
+                result[0].style.display = 'none';
+                result[1].style.display = 'block';
+            } else {
+                result[0].style.display = 'block';
+                result[1].style.display = 'none';
+            }
+        }
+    </script>
 {% endblock %}
