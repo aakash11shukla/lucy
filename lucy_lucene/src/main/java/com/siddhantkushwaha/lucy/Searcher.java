@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import com.google.gson.JsonArray;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.SortedNumericDocValuesField;
+import org.apache.lucene.document.LatLonDocValuesField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -35,10 +34,8 @@ public class Searcher {
 
         TopDocs foundDocs = searchInDocuments(query, searcher);
 
-        long endTime = System.nanoTime();
-        long totalTime = endTime - startTime;
-
-//        System.out.printf("Total Results: %s, time taken: %f\n\n", foundDocs.totalHits, totalTime / (1e9));
+//        long endTime = System.nanoTime();
+//        long totalTime = endTime - startTime;
 
         ArrayList<Place> result = new ArrayList<>();
         for (ScoreDoc sd : foundDocs.scoreDocs) {
@@ -67,21 +64,27 @@ public class Searcher {
     private static TopDocs searchInDocuments(String textToFind, IndexSearcher searcher) throws Exception {
 
         QueryParser qp = new QueryParser(Writer.PLACE_KEY_ABSTRACT, new StandardAnalyzer());
-
-        Query phraseQuery = qp.createPhraseQuery(Writer.PLACE_KEY_ABSTRACT, textToFind, 2);
+//
+//        Query phraseQuery = qp.createPhraseQuery(Writer.PLACE_KEY_ABSTRACT, textToFind, 2);
 //        System.out.println(phraseQuery);
+//
+//        Query query = qp.parse(textToFind);
+////        System.out.println(orQuery);
+//
+//        BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
+//        booleanQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
+//        booleanQueryBuilder.add(query, BooleanClause.Occur.FILTER);
+//
+//        BooleanQuery finalQuery = booleanQueryBuilder.build();
+////        System.out.println(finalQuery);
+//
+//        TopDocs result = searcher.search(finalQuery, 20);
+//        return result;
 
-        Query query = qp.parse(textToFind);
-//        System.out.println(orQuery);
+        Double[] latlng = {13.080000, 80.270000};
+        Sort sort = new Sort(LatLonDocValuesField.newDistanceSort(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1]));
+        Query query = LatLonDocValuesField.newSlowDistanceQuery(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1], 100000);
 
-        BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
-        booleanQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
-        booleanQueryBuilder.add(query, BooleanClause.Occur.FILTER);
-
-        BooleanQuery finalQuery = booleanQueryBuilder.build();
-//        System.out.println(finalQuery);
-
-        TopDocs result = searcher.search(finalQuery, 20);
-        return result;
+        return searcher.search(query, 10, sort);
     }
 }

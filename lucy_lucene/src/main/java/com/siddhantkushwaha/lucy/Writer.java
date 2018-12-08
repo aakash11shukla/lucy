@@ -1,15 +1,15 @@
 package com.siddhantkushwaha.lucy;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.DecimalFormat;
 
-import com.google.gson.JsonObject;;
+import com.google.gson.JsonObject;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
@@ -28,9 +28,6 @@ public class Writer {
     static String PLACE_KEY_NAME = "name";
     static String PLACE_KEY_ABSTRACT = "abstract";
     static String PLACE_KEY_COUNTRY = "country";
-    static String PLACE_KEY_POPULATION = "population";
-    static String PLACE_KEY_IS_PART_OF = "isPartOf";
-    static String PLACE_KEY_UTC_OFFSET = "utcOffset";
     static String PLACE_KEY_LATLNG = "latlng";
 
     public static void main(String[] args) {
@@ -81,22 +78,24 @@ public class Writer {
             if (jsonObject == null)
                 return;
 
-//            LatLonPoint
-//            Place place = CommonUtils.fromJson(jsonObject.toString(), Place.class);
-//
-//            Document doc = new Document();
-//            doc.add(new StringField("path", file.toString(), Field.Store.YES));
-//
-//            doc.add(new TextField(PLACE_KEY_NAME, place.getName(), Field.Store.YES));
-//            doc.add(new TextField(PLACE_KEY_ABSTRACT, place.getDescription(), Field.Store.YES));
-//            doc.add(new TextField(PLACE_KEY_COUNTRY, place.getCountry(), Field.Store.YES));
-//
-//            writer.updateDocument(new Term("path", file.toString()), doc);
+            DecimalFormat decimalFormat = new DecimalFormat("0.00");
+            String[] latlngStr = jsonObject.get("latlng").getAsString().replaceAll("[\"()]", "").split(" ");
+            Double[] latlngDouble = {Double.valueOf(decimalFormat.format(Double.valueOf(latlngStr[1]))), Double.valueOf(decimalFormat.format(Double.valueOf(latlngStr[0])))};
 
-            String[] latlng = jsonObject.get("latlng").toString().replaceAll("[\"()]", "").split(" ");
+            Document doc = new Document();
+            doc.add(new StringField("path", file.toString(), Field.Store.YES));
 
-            System.out.printf("%s %s\n", latlng[0], latlng[1]);
+            doc.add(new TextField(PLACE_KEY_NAME, jsonObject.get(PLACE_KEY_NAME).getAsString(), Field.Store.YES));
+            doc.add(new TextField(PLACE_KEY_ABSTRACT, jsonObject.get(PLACE_KEY_ABSTRACT).getAsString(), Field.Store.YES));
+            doc.add(new TextField(PLACE_KEY_COUNTRY, jsonObject.get(PLACE_KEY_COUNTRY).getAsString(), Field.Store.YES));
 
+            doc.add(new LatLonDocValuesField(PLACE_KEY_LATLNG, latlngDouble[0], latlngDouble[1]));
+
+            writer.updateDocument(new Term("path", file.toString()), doc);
+
+            System.out.printf("%s %f %f\n", jsonObject.get(PLACE_KEY_NAME).getAsString(), latlngDouble[0], latlngDouble[1]);
+        } catch (IllegalArgumentException e) {
+            throw (e);
         } catch (Exception e) {
             e.printStackTrace();
         }
