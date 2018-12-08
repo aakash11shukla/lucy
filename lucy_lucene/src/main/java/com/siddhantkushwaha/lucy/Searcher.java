@@ -63,28 +63,27 @@ public class Searcher {
 
     private static TopDocs searchInDocuments(String textToFind, IndexSearcher searcher) throws Exception {
 
+        BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
+        Sort sort = new Sort();
+
         QueryParser qp = new QueryParser(Writer.PLACE_KEY_ABSTRACT, new StandardAnalyzer());
-//
-//        Query phraseQuery = qp.createPhraseQuery(Writer.PLACE_KEY_ABSTRACT, textToFind, 2);
+        Query phraseQuery = qp.createPhraseQuery(Writer.PLACE_KEY_ABSTRACT, textToFind, 2);
 //        System.out.println(phraseQuery);
-//
-//        Query query = qp.parse(textToFind);
-////        System.out.println(orQuery);
-//
-//        BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
-//        booleanQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
-//        booleanQueryBuilder.add(query, BooleanClause.Occur.FILTER);
-//
-//        BooleanQuery finalQuery = booleanQueryBuilder.build();
-////        System.out.println(finalQuery);
-//
-//        TopDocs result = searcher.search(finalQuery, 20);
-//        return result;
+        booleanQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
+
+        Query query = qp.parse(textToFind);
+//        System.out.println(orQuery);
+        booleanQueryBuilder.add(query, BooleanClause.Occur.FILTER);
 
         Double[] latlng = {13.080000, 80.270000};
-        Sort sort = new Sort(LatLonDocValuesField.newDistanceSort(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1]));
-        Query query = LatLonDocValuesField.newSlowDistanceQuery(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1], 100000);
+        Integer radiusInMeters = 100000;
+        Query latLngQuery = LatLonDocValuesField.newSlowDistanceQuery(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1], radiusInMeters);
+        SortField locationSortField = LatLonDocValuesField.newDistanceSort(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1]);
+        booleanQueryBuilder.add(latLngQuery, BooleanClause.Occur.SHOULD);
+        sort.setSort(locationSortField);
 
-        return searcher.search(query, 10, sort);
+        BooleanQuery finalQuery = booleanQueryBuilder.build();
+//        System.out.println(finalQuery);
+        return searcher.search(finalQuery, 20, sort);
     }
 }
