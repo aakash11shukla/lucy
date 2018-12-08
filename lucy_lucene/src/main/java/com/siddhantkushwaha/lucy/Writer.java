@@ -80,16 +80,23 @@ public class Writer {
             JsonObject jsonObject = CommonUtils.fromJsonFile(file.toString());
             if (jsonObject == null)
                 return;
-            Place place = CommonUtils.fromJson(jsonObject.toString(), Place.class);
 
-            Document doc = new Document();
-            doc.add(new StringField("path", file.toString(), Field.Store.YES));
+//            LatLonPoint
+//            Place place = CommonUtils.fromJson(jsonObject.toString(), Place.class);
+//
+//            Document doc = new Document();
+//            doc.add(new StringField("path", file.toString(), Field.Store.YES));
+//
+//            doc.add(new TextField(PLACE_KEY_NAME, place.getName(), Field.Store.YES));
+//            doc.add(new TextField(PLACE_KEY_ABSTRACT, place.getDescription(), Field.Store.YES));
+//            doc.add(new TextField(PLACE_KEY_COUNTRY, place.getCountry(), Field.Store.YES));
+//
+//            writer.updateDocument(new Term("path", file.toString()), doc);
 
-            doc.add(new TextField(PLACE_KEY_NAME, place.getName(), Field.Store.YES));
-            doc.add(new TextField(PLACE_KEY_ABSTRACT, place.getDescription(), Field.Store.YES));
-            doc.add(new TextField(PLACE_KEY_COUNTRY, place.getCountry(), Field.Store.YES));
+            String[] latlng = jsonObject.get("latlng").toString().replaceAll("[\"()]", "").split(" ");
 
-            writer.updateDocument(new Term("path", file.toString()), doc);
+            System.out.printf("%s %s\n", latlng[0], latlng[1]);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
