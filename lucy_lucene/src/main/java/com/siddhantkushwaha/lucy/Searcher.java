@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import com.google.gson.JsonObject;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.LatLonDocValuesField;
@@ -21,21 +22,24 @@ public class Searcher {
         String query = null;
         try {
             query = args[0];
+            // System.out.println(query);
         } catch (Exception e) {
             // Nothing
         }
 
         if (query == null)
-            query = "city of joy";
+            return;
+
+        JsonObject queryObj = CommonUtils.fromJson(query, JsonObject.class);
 
         IndexSearcher searcher = createSearcher();
 
-//        long startTime = System.nanoTime();
+        // long startTime = System.nanoTime();
 
-        TopDocs foundDocs = searchInDocuments(query, searcher);
+        TopDocs foundDocs = searchInDocuments(queryObj, searcher);
 
-//        long endTime = System.nanoTime();
-//        long totalTime = endTime - startTime;
+        // long endTime = System.nanoTime();
+        // long totalTime = endTime - startTime;
 
         ArrayList<Place> result = new ArrayList<>();
         for (ScoreDoc sd : foundDocs.scoreDocs) {
@@ -61,30 +65,76 @@ public class Searcher {
         return new IndexSearcher(reader);
     }
 
-    private static TopDocs searchInDocuments(String textToFind, IndexSearcher searcher) throws Exception {
+    private static TopDocs searchInDocuments(JsonObject queryObj, IndexSearcher searcher) throws Exception {
+
+        // System.out.println(queryObj);
 
         BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
         Sort sort = new Sort();
 
-        QueryParser qp = new QueryParser(Writer.PLACE_KEY_ABSTRACT, new StandardAnalyzer());
-        Query phraseQuery = qp.createPhraseQuery(Writer.PLACE_KEY_ABSTRACT, textToFind, 2);
-//        System.out.println(phraseQuery);
-        booleanQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
+        if (queryObj.get(Writer.PLACE_KEY_LATLNG) != null) {
+            try {
+                String tt = queryObj.get(Writer.PLACE_KEY_LATLNG).getAsString();
+                Double[] latlng = Writer.getLatLngs(tt);
 
-        Query query = qp.parse(textToFind);
-//        System.out.println(orQuery);
-        booleanQueryBuilder.add(query, BooleanClause.Occur.FILTER);
+                Integer radiusInMeters = 100000;
+                Query latLngQuery = LatLonDocValuesField.newSlowDistanceQuery(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1], radiusInMeters);
+                // System.out.println(latLngQuery);
+                SortField locationSortField = LatLonDocValuesField.newDistanceSort(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1]);
 
-        Double[] latlng = {13.080000, 80.270000};
-        Integer radiusInMeters = 100000;
-        Query latLngQuery = LatLonDocValuesField.newSlowDistanceQuery(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1], radiusInMeters);
-//        System.out.println(latLngQuery);
-        SortField locationSortField = LatLonDocValuesField.newDistanceSort(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1]);
-//        booleanQueryBuilder.add(latLngQuery, BooleanClause.Occur.SHOULD);
-//        sort.setSort(locationSortField);
+                booleanQueryBuilder.add(latLngQuery, BooleanClause.Occur.SHOULD);
+                sort.setSort(locationSortField);
+            } catch (Exception e) {
+                // pass
+            }
+        }
+
+        if (queryObj.get(Writer.PLACE_KEY_COUNTRY) != null) {
+            try {
+                String textToFind = queryObj.get(Writer.PLACE_KEY_COUNTRY).getAsString();
+
+                QueryParser qp = new QueryParser(Writer.PLACE_KEY_COUNTRY, new StandardAnalyzer());
+                Query query = qp.parse(textToFind);
+                booleanQueryBuilder.add(query, BooleanClause.Occur.MUST);
+            } catch (Exception e) {
+                // pass
+            }
+        }
+
+        if (queryObj.get(Writer.PLACE_KEY_NAME) != null) {
+            try {
+                String textToFind = queryObj.get(Writer.PLACE_KEY_NAME).getAsString();
+
+                QueryParser qp = new QueryParser(Writer.PLACE_KEY_NAME, new StandardAnalyzer());
+                Query query = qp.parse(textToFind);
+                booleanQueryBuilder.add(query, BooleanClause.Occur.SHOULD);
+            } catch (Exception e) {
+                // pass
+            }
+
+        }
+
+        if (queryObj.get(Writer.PLACE_KEY_ABSTRACT) != null) {
+            try {
+                String textToFind = queryObj.get(Writer.PLACE_KEY_ABSTRACT).getAsString();
+
+                QueryParser qp = new QueryParser(Writer.PLACE_KEY_ABSTRACT, new StandardAnalyzer());
+                Query phraseQuery = qp.createPhraseQuery(Writer.PLACE_KEY_ABSTRACT, textToFind, 2);
+                // System.out.println(phraseQuery);
+
+                booleanQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
+
+                Query query = qp.parse(textToFind);
+                // System.out.println(orQuery);
+
+                booleanQueryBuilder.add(query, BooleanClause.Occur.FILTER);
+            } catch (Exception e) {
+                // pass
+            }
+        }
 
         BooleanQuery finalQuery = booleanQueryBuilder.build();
-//        System.out.println(finalQuery);
+        // System.out.println(finalQuery);
         return searcher.search(finalQuery, 20, sort);
     }
 }

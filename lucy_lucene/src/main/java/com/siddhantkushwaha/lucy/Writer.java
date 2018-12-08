@@ -78,9 +78,7 @@ public class Writer {
             if (jsonObject == null)
                 return;
 
-            DecimalFormat decimalFormat = new DecimalFormat("0.00");
-            String[] latlngStr = jsonObject.get("latlng").getAsString().replaceAll("[\"()]", "").split(" ");
-            Double[] latlngDouble = {Double.valueOf(decimalFormat.format(Double.valueOf(latlngStr[1]))), Double.valueOf(decimalFormat.format(Double.valueOf(latlngStr[0])))};
+            Double[] latlng = getLatLngs(jsonObject.get("latlng").getAsString());
 
             Document doc = new Document();
             doc.add(new StringField("path", file.toString(), Field.Store.YES));
@@ -89,15 +87,22 @@ public class Writer {
             doc.add(new TextField(PLACE_KEY_ABSTRACT, jsonObject.get(PLACE_KEY_ABSTRACT).getAsString(), Field.Store.YES));
             doc.add(new TextField(PLACE_KEY_COUNTRY, jsonObject.get(PLACE_KEY_COUNTRY).getAsString(), Field.Store.YES));
 
-            doc.add(new LatLonDocValuesField(PLACE_KEY_LATLNG, latlngDouble[0], latlngDouble[1]));
+            doc.add(new LatLonDocValuesField(PLACE_KEY_LATLNG, latlng[1], latlng[0]));
 
             writer.updateDocument(new Term("path", file.toString()), doc);
 
-            System.out.printf("%s %f %f\n", jsonObject.get(PLACE_KEY_NAME).getAsString(), latlngDouble[0], latlngDouble[1]);
+            System.out.printf("%s %f %f\n", jsonObject.get(PLACE_KEY_NAME).getAsString(), latlng[1], latlng[0]);
         } catch (IllegalArgumentException e) {
             throw (e);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static Double[] getLatLngs(String latlng) {
+
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        String[] latlngStr = latlng.replaceAll("[\"()]", "").split(" ");
+        return new Double[]{Double.valueOf(decimalFormat.format(Double.valueOf(latlngStr[0]))), Double.valueOf(decimalFormat.format(Double.valueOf(latlngStr[1])))};
     }
 }

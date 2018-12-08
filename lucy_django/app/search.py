@@ -11,8 +11,12 @@ def get_search_results(query):
 
     process = subprocess.Popen(["java", "-jar", "lucy.jar", query], stdin=subprocess.PIPE,
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    result = process.stdout.read().decode()
+    result = process.stdout.read()
+    result = result.decode()
+    print(result)
+
     process.communicate()
+
     return json.loads(result)
 
 
