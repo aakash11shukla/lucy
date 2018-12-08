@@ -14,3 +14,7 @@ def get_search_results(query):
     result = process.stdout.read().decode()
     process.communicate()
     return json.loads(result)
+
+
+if __name__ == '__main__':
+    get_search_results("city of joy")

@@ -30,7 +30,7 @@ public class Searcher {
 
         IndexSearcher searcher = createSearcher();
 
-        long startTime = System.nanoTime();
+//        long startTime = System.nanoTime();
 
         TopDocs foundDocs = searchInDocuments(query, searcher);
 
@@ -43,9 +43,9 @@ public class Searcher {
             Document d = searcher.doc(sd.doc);
 
             Place place = new Place();
-            place.setName(d.get("name"));
-            place.setDescription(d.get("abstract"));
-            place.setCountry(d.get("country"));
+            place.setName(d.get(Writer.PLACE_KEY_NAME));
+            place.setDescription(d.get(Writer.PLACE_KEY_ABSTRACT));
+            place.setCountry(d.get(Writer.PLACE_KEY_COUNTRY));
 
             result.add(place);
         }
@@ -78,9 +78,10 @@ public class Searcher {
         Double[] latlng = {13.080000, 80.270000};
         Integer radiusInMeters = 100000;
         Query latLngQuery = LatLonDocValuesField.newSlowDistanceQuery(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1], radiusInMeters);
+//        System.out.println(latLngQuery);
         SortField locationSortField = LatLonDocValuesField.newDistanceSort(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1]);
-        booleanQueryBuilder.add(latLngQuery, BooleanClause.Occur.SHOULD);
-        sort.setSort(locationSortField);
+//        booleanQueryBuilder.add(latLngQuery, BooleanClause.Occur.SHOULD);
+//        sort.setSort(locationSortField);
 
         BooleanQuery finalQuery = booleanQueryBuilder.build();
 //        System.out.println(finalQuery);
