@@ -1,4 +1,3 @@
-
 ## Index Writer
 The **Writer** class in maven project **lucy-lucene** is used to write the index in a folder *indexedFiles* from input files stored in *inputFiles*. 
 
@@ -50,4 +49,26 @@ Some sample queries:
 
 The received output is then rendered as an HTML response and returned to the browser.
 
+## How to run the project
+A *JAR* file is already present in *lucy_lucene* directory, so there is no need to run the maven project.
 
+Do not change the directory of the *JAR* since the path is already configured in Django project. 
+
+Put your input files in *inputFiles* directory and run the following command in *lucy_lucene* directory to create the index:
+
+    java -cp lucy.jar com.siddhantkushwaha.lucy.Writer
+
+Once this is done, we need to run the *django* server:
+
+    # create a virtual environment # python3.6
+    python3.6 -m venv venv
+    
+    # activate the virtual env and install dependencies
+    source venv/bin/activate
+    cd lucy/lucy_django
+    pip install install -r requirements.txt
+
+    #run server
+    python manage.py runserver
+
+Visit [127.0.0.1:8000](127.0.0.1:8000)
