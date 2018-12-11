@@ -27,10 +27,14 @@ public class Searcher {
             // Nothing
         }
 
-        if (query == null)
-            return;
-
-        JsonObject queryObj = CommonUtils.fromJson(query, JsonObject.class);
+        JsonObject queryObj = null;
+        try {
+            queryObj = CommonUtils.fromJson(query, JsonObject.class);
+        } catch (Exception e) {
+            queryObj = new JsonObject();
+            queryObj.addProperty("name", "kolkata");
+            queryObj.addProperty("latlng", "23 75");
+        }
 
         IndexSearcher searcher = createSearcher();
 
@@ -67,7 +71,7 @@ public class Searcher {
 
     private static TopDocs searchInDocuments(JsonObject queryObj, IndexSearcher searcher) throws Exception {
 
-        // System.out.println(queryObj);
+//        System.out.println(queryObj);
 
         BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
         Sort sort = new Sort();
@@ -79,7 +83,7 @@ public class Searcher {
 
                 Integer radiusInMeters = 100000;
                 Query latLngQuery = LatLonDocValuesField.newSlowDistanceQuery(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1], radiusInMeters);
-                // System.out.println(latLngQuery);
+//                System.out.println(latLngQuery);
                 SortField locationSortField = LatLonDocValuesField.newDistanceSort(Writer.PLACE_KEY_LATLNG, latlng[0], latlng[1]);
 
                 booleanQueryBuilder.add(latLngQuery, BooleanClause.Occur.SHOULD);
@@ -95,6 +99,7 @@ public class Searcher {
 
                 QueryParser qp = new QueryParser(Writer.PLACE_KEY_COUNTRY, new StandardAnalyzer());
                 Query query = qp.parse(textToFind);
+//                System.out.println(query);
                 booleanQueryBuilder.add(query, BooleanClause.Occur.MUST);
             } catch (Exception e) {
                 // pass
@@ -107,6 +112,7 @@ public class Searcher {
 
                 QueryParser qp = new QueryParser(Writer.PLACE_KEY_NAME, new StandardAnalyzer());
                 Query query = qp.parse(textToFind);
+//                System.out.println(query);
                 booleanQueryBuilder.add(query, BooleanClause.Occur.SHOULD);
             } catch (Exception e) {
                 // pass
@@ -120,12 +126,12 @@ public class Searcher {
 
                 QueryParser qp = new QueryParser(Writer.PLACE_KEY_ABSTRACT, new StandardAnalyzer());
                 Query phraseQuery = qp.createPhraseQuery(Writer.PLACE_KEY_ABSTRACT, textToFind, 2);
-                // System.out.println(phraseQuery);
+//                System.out.println(phraseQuery);
 
                 booleanQueryBuilder.add(phraseQuery, BooleanClause.Occur.SHOULD);
 
                 Query query = qp.parse(textToFind);
-                // System.out.println(orQuery);
+//                System.out.println(query);
 
                 booleanQueryBuilder.add(query, BooleanClause.Occur.FILTER);
             } catch (Exception e) {
@@ -134,7 +140,7 @@ public class Searcher {
         }
 
         BooleanQuery finalQuery = booleanQueryBuilder.build();
-        // System.out.println(finalQuery);
+//        System.out.println(finalQuery);
         return searcher.search(finalQuery, 20, sort);
     }
 }
